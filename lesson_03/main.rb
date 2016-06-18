@@ -21,3 +21,8 @@ puts "Станции маршрута 2:"
 puts r2.list_station
 
 d.add_train(t48)
+t48.accept_route(r1)
+t48.next_station(r1)
+z.train_type_list
+
+

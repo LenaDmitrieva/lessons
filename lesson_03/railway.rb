@@ -15,7 +15,8 @@ class Station
   end
 
   def train_type_list
-    @train.select{|train| train.type == :pass}.size
+    puts "На станции #{@train.select{|train| train.type == :pass}.size} пассажирских поездов" 
+    puts "На станции #{@train.select{|train| train.type == :goods}.size} грузовых поездов"
   end
 
   def train_depart(train)
@@ -31,28 +32,28 @@ end
 
 class Route
 
+  attr_reader :stations
+
   def initialize(first_st, last_st)
-    @first_st = first_st
-    @last_st = last_st
-    @name_r = [first_st, last_st] 	
+    @stations = [first_st, last_st] 	
   end
 
   def add_station(name_st)
     @name_st = name_st
-    @name_r.insert(1, name_st)
+    @stations.insert(1, name_st)
   end
 
   def delete_station(name_st)
     @name_st = name_st
-    @name_r.delete(name_st)
+    @stations.delete(name_st)
   end
 
   def list_station
-    puts @name_r
+    puts @stations
   end 
 
   def to_s
-    "Маршрут #{@name_r}"    
+    "Маршрут #{@stations}"    
   end
 
 end
@@ -60,6 +61,8 @@ end
 class Train
 
   attr_accessor :speed
+
+  attr_reader :type
 
   # def speed=(speed)
   #   @speed = speed
@@ -74,7 +77,6 @@ class Train
     @type = type
     @carriage = carriage
     @speed = 0
-    @route = []
   end
 
   def go
@@ -94,22 +96,33 @@ class Train
   end
 
   def hitch_carriage
-    self.speed = 0
-    @carriage += 1
+    if self.speed = 0
+      @carriage += 1
+    end
   end
 
   def cut_off_carriage
-    self.speed = 0
-    @carriage -= 1
+    if self.speed = 0
+      @carriage -= 1
+    end
   end
 
-  def accept_route
-    @route = @name_r
-    @station = @name_r[0]
+  def accept_route(route)
+    @route = route
+    @station_index = 0
+    @route.stations[@station_index].add_train(self)
+    puts "Принят маршрут #{@route}, текущая станция #{@route.stations[@station_index]}"
   end
+
+  def next_station(route)
+    @route = route
+    @station_index += 1
+    @route.stations[@station_index].add_train(self)
+    puts "Текущая станция #{@route.stations[@station_index]}, предыдущая станция #{@route.stations[@station_index - 1]}, следующая станция #{@route.stations[@station_index + 1]}"
+  end  
 
   def to_s
-    "Поезд №#{@number} #{@type}(#{@carriage} вагонов. Скорость: #{@speed})"
+    "Поезд №#{@number} #{@type}(#{@carriage} вагонов. Скорость: #{@speed}) Текущий Маршрут: #{@route} Текущая Станция: #{@station}"
   end
 
 end
