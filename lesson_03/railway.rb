@@ -38,14 +38,12 @@ class Route
     @stations = [first_st, last_st] 	
   end
 
-  def add_station(name_st)
-    @name_st = name_st
-    @stations.insert(1, name_st)
+  def add_station(station)
+    @stations.insert(1, station)
   end
 
-  def delete_station(name_st)
-    @name_st = name_st
-    @stations.delete(name_st)
+  def delete_station(station)
+    @stations.delete(station)
   end
 
   def list_station
@@ -60,7 +58,7 @@ end
 
 class Train
 
-  attr_accessor :speed
+  attr_reader :speed
 
   attr_reader :type
 
@@ -96,13 +94,13 @@ class Train
   end
 
   def hitch_carriage
-    if self.speed = 0
+    if self.speed == 0
       @carriage += 1
     end
   end
 
   def cut_off_carriage
-    if self.speed = 0
+    if self.speed == 0
       @carriage -= 1
     end
   end
@@ -114,13 +112,21 @@ class Train
     puts "Принят маршрут #{@route}, текущая станция #{@route.stations[@station_index]}"
   end
 
-  def next_station(route)
-    @route = route
+  def next_station
+    return if @route.stations[@station_index + 1] == nil
+    @route.stations[@station_index].train_depart(self)
     @station_index += 1
     @route.stations[@station_index].add_train(self)
-    puts "Текущая станция #{@route.stations[@station_index]}, предыдущая станция #{@route.stations[@station_index - 1]}, следующая станция #{@route.stations[@station_index + 1]}"
-  end  
+  end
 
+  def show_stations
+    if @route
+      puts "Предыдущая: #{@route.stations[@station_index - 1]}" if @station_index > 0
+      puts "Текущая: #{@route.stations[@station_index]}"
+      puts "Следующая: #{@route.stations[@station_index + 1]}" if @route.stations[@station_index + 1]
+    end
+  end
+  
   def to_s
     "Поезд №#{@number} #{@type}(#{@carriage} вагонов. Скорость: #{@speed}) Текущий Маршрут: #{@route} Текущая Станция: #{@station}"
   end
